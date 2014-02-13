@@ -1,0 +1,6 @@
+*.vo
+*.vcd
+
+*.o
+utils/testcase_generator/testcase_generator
+
