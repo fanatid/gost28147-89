@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS =
-DEFS = -O2 -std=c11 -Wall
+DEFS = -std=c11 -Wall -O2
 LIBS = -lssl -lcrypto
 DEPS = gost89.h
 

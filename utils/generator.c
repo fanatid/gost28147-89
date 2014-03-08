@@ -91,10 +91,10 @@ int main(int argc, char **argv) {
   printf("\n");
 
   /* MAC mode */
-  printf("MAC mode (length: 20bit): \n");
+  printf("MAC mode (length: 32bit): \n");
   printNblocks(&in[0], sizeof(in)/8); printf("\n");
   memset((void*) &out1[0], 0, 8);
-  gost_mac(&ctx, &in[0], sizeof(in), &out1[0], 20);
+  gost_mac(&ctx, &in[0], sizeof(in), &out1[0], 32);
   print8bytes(&out1[0]); printf("\n\n");
 
   return 0;

@@ -1,4 +1,3 @@
-
 %_tb: %_tb.v
 	iverilog -o $@.vo $< ../rtl/*.v
 	vvp $@.vo

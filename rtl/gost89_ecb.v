@@ -1,36 +1,36 @@
 module gost89_ecb_encrypt(
-  input          clk,
-  input          reset,
-  input          load_data,
-  input  [511:0] sbox,
-  input  [255:0] key,
-  input  [63:0]  in,
-  output [63:0]  out,
-  output         busy
+  input              clk,
+  input              reset,
+  input              load_data,
+  input      [511:0] sbox,
+  input      [255:0] key,
+  input      [63:0]  in,
+  output reg [63:0]  out,
+  output reg         busy
 );
   reg  [5:0]  round_num;
   reg  [31:0] n1, n2, round_key;
   wire [31:0] out1, out2;
 
   initial begin
+    busy = 0;
     round_num = 32;
   end
 
   gost89_round
     rnd(clk, sbox, round_key, n1, n2, out1, out2);
 
-  assign out[31:0]  = out1;
-  assign out[63:32] = out2;
-  assign busy = !(round_num == 32);
-
   always @(posedge clk) begin
     if (load_data) begin
-      round_num <= 0;
       n1 <= in[63:32];
       n2 <= in[31:0];
+      out  <= 64'h xxxxxxxxxxxxxxxx;
+      busy <= 1;
+      round_num <= 0;
     end
 
     if (reset && !load_data) begin
+      busy <= 0;
       round_num <= 32;
     end
 
@@ -40,6 +40,11 @@ module gost89_ecb_encrypt(
       if (round_num > 0 && round_num < 32) begin
         n1 <= out1;
         n2 <= out2;
+      end
+      if (round_num == 32) begin
+        out[63:32] <= out2;
+        out[31:0]  <= out1;
+        busy <= 0;
       end
     end
   end
@@ -83,14 +88,14 @@ module gost89_ecb_encrypt(
 endmodule
 
 module gost89_ecb_decrypt(
-  input          clk,
-  input          reset,
-  input          load_data,
-  input  [511:0] sbox,
-  input  [255:0] key,
-  input  [63:0]  in,
-  output [63:0]  out,
-  output         busy
+  input              clk,
+  input              reset,
+  input              load_data,
+  input      [511:0] sbox,
+  input      [255:0] key,
+  input      [63:0]  in,
+  output reg [63:0]  out,
+  output reg         busy
 );
   reg  [5:0]  round_num;
   reg  [31:0] n1, n2, round_key;
@@ -99,22 +104,22 @@ module gost89_ecb_decrypt(
   gost89_round
     rnd(clk, sbox, round_key, n1, n2, out1, out2);
 
-  assign out[31:0]  = out1;
-  assign out[63:32] = out2;
-  assign busy = !(round_num == 32);
-
   initial begin
+    busy = 0;
     round_num = 32;
   end
 
   always @(posedge clk) begin
     if (load_data) begin
-      round_num <= 0;
       n1 <= in[63:32];
       n2 <= in[31:0];
+      out  <= 64'h xxxxxxxxxxxxxxxx;
+      busy <= 1;
+      round_num <= 0;
     end
 
     if (reset && !load_data) begin
+      busy <= 0;
       round_num <= 32;
     end
 
@@ -124,6 +129,11 @@ module gost89_ecb_decrypt(
       if (round_num > 0 && round_num < 32) begin
         n1 <= out1;
         n2 <= out2;
+      end
+      if (round_num == 32) begin
+        out[63:32] = out2;
+        out[31:0]  = out1;
+        busy <= 0;
       end
     end
   end

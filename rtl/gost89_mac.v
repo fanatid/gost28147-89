@@ -1,67 +1,75 @@
 module gost89_mac(
-  input          clk,
-  input          reset,
-  input          load_data,
-  input  [511:0] sbox,
-  input  [255:0] key,
-  input  [63:0]  in,
-  output [31:0]  out,
-  output         busy
+  input              clk,
+  input              reset,
+  input              load_data,
+  input      [511:0] sbox,
+  input      [255:0] key,
+  input      [63:0]  in,
+  output reg [31:0]  out,
+  output reg         busy
 );
-  reg  [4:0]  round_num;
+  reg  [4:0]  counter;
   reg  [31:0] round_key;
   reg         need_xor;
   reg  [31:0] n1, n2;
   wire [31:0] out1, out2;
 
   initial begin
-    round_num = 16;
-    need_xor  = 0;
+    busy = 0;
+    counter  = 17;
+    need_xor = 0;
   end
 
   gost89_round
     rnd(clk, sbox, round_key, n1, n2, out1, out2);
 
-  assign out  = out2;
-  assign busy = !(round_num == 16);
-
   always @(posedge clk) begin
     if (reset && !load_data) begin
-      round_num <= 16;
-      need_xor  <= 0;
+      counter  <= 17;
+      need_xor <= 0;
+      busy <= 0;
+      out  <= 32'h xxxxxxxx;
     end
 
     if (!reset && load_data) begin
       if (need_xor) begin
-        n1 <= in[63:32] ^ out2;
-        n2 <= in[31:0]  ^ out1;
+        n1 <= in[63:32] ^ n2;
+        n2 <= in[31:0]  ^ n1;
       end else begin
         n1 <= in[63:32];
         n2 <= in[31:0];
         need_xor <= 1;
       end
-      round_num <= 0;
+      counter <= 0;
+      busy <= 1;
+      out  <= 32'h xxxxxxxx;
     end
 
     if (reset && load_data) begin
       n1 <= in[63:32];
       n2 <= in[31:0];
-      round_num <= 0;
-      need_xor  <= 1;
+      counter  <= 0;
+      need_xor <= 1;
+      busy <= 1;
+      out  <= 32'h xxxxxxxx;
     end
 
     if (!reset && !load_data) begin
-      if (round_num < 16)
-        round_num <= round_num + 1;
-      if (round_num > 0 && round_num < 16) begin
+      if (counter < 17)
+        counter <= counter + 1;
+      if (counter > 0 && counter < 17) begin
         n1 <= out1;
         n2 <= out2;
+      end
+      if (counter == 16) begin
+        busy <= 0;
+        out  <= out2;
       end
     end
   end
 
   always @(posedge clk)
-    case (round_num)
+    case (counter)
       0:  round_key <= key[255:224];
       1:  round_key <= key[223:192];
       2:  round_key <= key[191:160];

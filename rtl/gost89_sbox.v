@@ -3,7 +3,7 @@ module gost89_sbox(
   input      [3:0]  in,
   output reg [3:0]  out
 );
-  always @(in)
+  always @(in or sbox)
     case (in)
       4'h0: out <= sbox[63:60];
       4'h1: out <= sbox[59:56];

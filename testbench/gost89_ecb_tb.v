@@ -32,19 +32,19 @@ d658a36b11cf46eb 7aea1ed18e604249 c35472c91cd78640 3b5834a000fba066
     reset_e = 0;     reset_d = 0;
     load_data_e = 0; load_data_d = 0;
 
-// Without reset
+// Normal usage
     #1;
     in_e = 64'h d5a8a608f4f115b4; in_d = 64'h d658a36b11cf46eb;
     load_data_e = 1; load_data_d = 1;
     #2;
     load_data_e = 0; load_data_d = 0;
-    #64;
+    #66;
     if (out_e !== 64'h d658a36b11cf46eb || out_d !== 64'h d5a8a608f4f115b4)
       begin $display("E"); $finish; end
     $display("OK");
 
 // After reset
-    #10;
+    #2;
     reset_e = 1; reset_d = 1;
     #2;
     reset_e = 0; reset_d = 0;
@@ -53,13 +53,13 @@ d658a36b11cf46eb 7aea1ed18e604249 c35472c91cd78640 3b5834a000fba066
     load_data_e = 1; load_data_d = 1;
     #2;
     load_data_e = 0; load_data_d = 0;
-    #64;
+    #66;
     if (out_e !== 64'h 7aea1ed18e604249 || out_d !== 64'h 389eb44a391474c4)
       begin $display("E"); $finish; end
     $display("OK");
 
 // Reset in processing
-    #10;
+    #2;
     in_e = 64'h 0123456789abcdef; in_d = 64'h 0123456789abcdef;
     load_data_e = 1; load_data_d = 1;
     #2;
@@ -73,25 +73,20 @@ d658a36b11cf46eb 7aea1ed18e604249 c35472c91cd78640 3b5834a000fba066
     load_data_e = 1; load_data_d = 1;
     #2;
     load_data_e = 0; load_data_d = 0;
-    #64;
+    #66;
     if (out_e !== 64'h c35472c91cd78640 || out_d !== 64'h 379e59c3c96bb2ab)
       begin $display("E"); $finish; end
     $display("OK");
 
 // Start with reset
-    #10;
-    in_e = 64'h 0123456789abcdef; in_d = 64'h 0123456789abcdef;
-    load_data_e = 1; load_data_d = 1;
     #2;
-    load_data_e = 0; load_data_d = 0;
-    #12;
     in_e = 64'h 3f38ae3b8f541361; in_d = 64'h 3b5834a000fba066;
     load_data_e = 1; load_data_d = 1;
     reset_e = 1; reset_d = 1;
     #2;
     load_data_e = 0; load_data_d = 0;
     reset_e = 0; reset_d = 0;
-    #64;
+    #66;
     if (out_e !== 64'h 3b5834a000fba066 || out_d !== 64'h 3f38ae3b8f541361)
       begin $display("E"); $finish; end
     $display("OK");

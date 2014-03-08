@@ -38,7 +38,7 @@ CFB mode (gamma: fa5679a45f118aed):
     load_data_e = 0;
     load_data_d = 0;
 
-// just chain
+// Normal usage
     #1;
     in_e = 64'h 6aa0379517bb57af; in_d = 64'h 6aa0379517bb57af;
     reset_e = 1; reset_d = 1;
@@ -48,7 +48,7 @@ CFB mode (gamma: fa5679a45f118aed):
     load_data_e = 1; load_data_d = 1;
     #2;
     load_data_e = 0; load_data_d = 0;
-    #66;
+    #68;
     if (out_e !== 64'h 54826055ab718bc7 && out_d !== 64'h 8d437364581af0da)
       begin $display("E"); $finish; end
     $display("OK");
@@ -56,12 +56,12 @@ CFB mode (gamma: fa5679a45f118aed):
     load_data_e = 1; load_data_d = 1;
     #2;
     load_data_e = 0; load_data_d = 0;
-    #66;
+    #68;
     if (out_e !== 64'h 585ddacf1a45e472 && out_d !== 64'h 12911df3eddcc0fb)
       begin $display("E"); $finish; end
     $display("OK");
 
-// another chain after reset
+// Change gamma
     #2;
     in_e = 64'h fa5679a45f118aed; in_d = 64'h fa5679a45f118aed;
     reset_e = 1; reset_d = 1;
@@ -71,12 +71,12 @@ CFB mode (gamma: fa5679a45f118aed):
     load_data_e = 1; load_data_d = 1;
     #2;
     load_data_e = 0; load_data_d = 0;
-    #66;
+    #68;
     if (out_e !== 64'h 27d3e781cc4fcf43 && out_d !== 64'h 419677a6eff07f2f)
       begin $display("E"); $finish; end
     $display("OK");
 
-// reset in processing
+// Reset in processing
     #2;
     in_e = 64'h 6aa0379517bb57af; in_d = 64'h 6aa0379517bb57af;
     reset_e = 1; reset_d = 1;
@@ -95,12 +95,12 @@ CFB mode (gamma: fa5679a45f118aed):
     load_data_e = 1; load_data_d = 1;
     #2;
     load_data_e = 0; load_data_d = 0;
-    #66;
+    #68;
     if (out_e !== 64'h 27d3e781cc4fcf43 && out_d !== 64'h 419677a6eff07f2f)
       begin $display("E"); $finish; end
     $display("OK");
 
-    #50;
+    #10;
     $display("All passed");
     $finish;
   end

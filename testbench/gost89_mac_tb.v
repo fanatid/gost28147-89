@@ -11,7 +11,7 @@ module gost89_mac_tb;
   reg  [63:0]  in;
   wire [31:0]  out;
   wire         busy;
-  wire [19:0]  result = out[19:0];
+  wire [31:0]  result = out[31:0];
 
   gost89_mac mac1(clk, reset, load_data, sbox, key, in, out, busy);
 
@@ -23,138 +23,103 @@ module gost89_mac_tb;
     reset     = 0;
     load_data = 0;
 
-/* Without reset
-cb36401ec6d36482 727b1e7d9ef80d3d 19dfe6249374c677 
-a5ff400000000000
+/* Normal usage
+4b657e2ef0d2dfa2 af36b591bbd96c85 3569faad243d6fa4 
+b4a50c2c00000000
 */
-    #1;
-    in = 64'h cb36401ec6d36482;
-    load_data = 1;
-    #2;
-    load_data = 0;
-
-    #32;
-    in = 64'h 727b1e7d9ef80d3d;
-    load_data = 1;
-    #2;
-    load_data = 0;
-
-    #32;
-    in = 64'h 19dfe6249374c677;
-    load_data = 1;
-    #2;
-    load_data = 0;
-
-    #32;
-    if (result !== 20'h a5ff4)
-      begin $display("E"); $finish; end
-    $display("OK");
-
-/* After reset
-3bdb7810add20e66 7692fe7c9374aa9f 28f6d24f9e7e18c0 
-df47800000000000
-*/
+    #1
     reset = 1;
     #2
     reset = 0;
     #2
-    in = 64'h 3bdb7810add20e66;
+    in = 64'h 4b657e2ef0d2dfa2;
     load_data = 1;
     #2;
     load_data = 0;
 
-    #32;
-    in = 64'h 7692fe7c9374aa9f;
+    #34;
+    in = 64'h af36b591bbd96c85;
     load_data = 1;
     #2;
     load_data = 0;
 
-    #32;
-    in = 64'h 28f6d24f9e7e18c0;
+    #34;
+    in = 64'h 3569faad243d6fa4;
     load_data = 1;
     #2;
     load_data = 0;
 
-    #32;
-    if (result !== 20'h df478)
+    #34;
+    if (result !== 32'h b4a50c2c)
       begin $display("E"); $finish; end
     $display("OK");
 
 /* Reset in processing
-d58566f102366cc5 63ff8538f154f330 33dca4cce64866ba 
-5e5ca00000000000
+845fbd32d185bbf2 387172424b8518a3 ba95eadaa69ed200 
+7acc77a200000000
 */
     reset = 1;
     #2
     reset = 0;
     #2
-    in = 64'h 0123456789abcdef;
+    in = 64'h 4b657e2ef0d2dfa2;
     load_data = 1;
     #2;
     load_data = 0;
-
     #10
     reset = 1;
     #2
     reset = 0;
+
     #4
-    in = 64'h d58566f102366cc5;
+    in = 64'h 845fbd32d185bbf2;
     load_data = 1;
     #2;
     load_data = 0;
 
-    #32;
-    in = 64'h 63ff8538f154f330;
+    #34;
+    in = 64'h 387172424b8518a3;
     load_data = 1;
     #2;
     load_data = 0;
 
-    #32;
-    in = 64'h 33dca4cce64866ba;
+    #34;
+    in = 64'h ba95eadaa69ed200;
     load_data = 1;
     #2;
     load_data = 0;
 
-    #32;
-    if (result !== 20'h 5e5ca)
+    #34;
+    if (result !== 32'h 7acc77a2)
       begin $display("E"); $finish; end
     $display("OK");
 
 /* Start with reset
-8d437364581af0da 12911df3eddcc0fb b73369c4b5cf3e7d 
-4cb8300000000000
+ba3d8a2c8fe0307a c1fe2bf562c45b53 c066169b334014e0 
+c9541f2800000000
 */
-    reset = 1;
     #2
-    reset = 0;
-    #2
-    in = 64'h 0123456789abcdef;
+    in = 64'h ba3d8a2c8fe0307a;
     load_data = 1;
-    #2;
-    load_data = 0;
-
-    #6;
-    in = 64'h 8d437364581af0da;
     reset = 1;
-    load_data = 1;
     #2;
+    load_data = 0;
     reset = 0;
-    load_data = 0;
 
-    #32;
-    in = 64'h 12911df3eddcc0fb;
+    #34;
+    in = 64'h c1fe2bf562c45b53;
     load_data = 1;
     #2;
     load_data = 0;
 
-    #32;
-    in = 64'h b73369c4b5cf3e7d;
+    #34;
+    in = 64'h c066169b334014e0;
     load_data = 1;
     #2;
     load_data = 0;
 
-    #32;
-    if (result !== 20'h 4cb83)
+    #34;
+    if (result !== 32'h c9541f28)
       begin $display("E"); $finish; end
     $display("OK");
 

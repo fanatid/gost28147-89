@@ -9,6 +9,7 @@ module gost89_cfb_encrypt(
   output reg         busy
 );
   reg  [63:0] gamma;
+  reg  [63:0] in_value;
   wire [63:0] out_e;
   wire        load_e, busy_e;
 
@@ -20,15 +21,19 @@ module gost89_cfb_encrypt(
   always @(posedge clk) begin
     if (reset && !load_data) begin
       gamma <= in;
-      busy  <= 0;
+      out  <= 64'h xxxxxxxxxxxxxxxx;
+      busy <= 0;
     end
 
-    if (!reset & load_data)
+    if (!reset & load_data) begin
+      in_value <= in;
+      out  <= 64'h xxxxxxxxxxxxxxxx;
       busy <= 1;
+    end
 
     if (!reset && !load_data && !busy_e && busy) begin
-      gamma <= out_e ^ in;
-      out   <= out_e ^ in;
+      gamma <= out_e ^ in_value;
+      out   <= out_e ^ in_value;
       busy  <= 0;
     end
   end
@@ -45,6 +50,7 @@ module gost89_cfb_decrypt(
   output reg         busy
 );
   reg  [63:0] gamma;
+  reg  [63:0] in_value;
   wire [63:0] out_e;
   wire        load_e, busy_e;
 
@@ -56,15 +62,19 @@ module gost89_cfb_decrypt(
   always @(posedge clk) begin
     if (reset && !load_data) begin
       gamma <= in;
-      busy  <= 0;
+      out  <= 64'h xxxxxxxxxxxxxxxx;
+      busy <= 0;
     end
 
-    if (!reset & load_data)
+    if (!reset & load_data) begin
+      in_value <= in;
+      out  <= 64'h xxxxxxxxxxxxxxxx;
       busy <= 1;
+    end
 
     if (!reset && !load_data && !busy_e && busy) begin
-      gamma <= in;
-      out   <= out_e ^ in;
+      gamma <= in_value;
+      out   <= out_e ^ in_value;
       busy  <= 0;
     end
   end
