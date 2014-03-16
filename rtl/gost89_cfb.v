@@ -21,13 +21,11 @@ module gost89_cfb_encrypt(
   always @(posedge clk) begin
     if (reset && !load_data) begin
       gamma <= in;
-      out  <= 64'h xxxxxxxxxxxxxxxx;
       busy <= 0;
     end
 
     if (!reset & load_data) begin
       in_value <= in;
-      out  <= 64'h xxxxxxxxxxxxxxxx;
       busy <= 1;
     end
 
@@ -62,13 +60,11 @@ module gost89_cfb_decrypt(
   always @(posedge clk) begin
     if (reset && !load_data) begin
       gamma <= in;
-      out  <= 64'h xxxxxxxxxxxxxxxx;
       busy <= 0;
     end
 
     if (!reset & load_data) begin
       in_value <= in;
-      out  <= 64'h xxxxxxxxxxxxxxxx;
       busy <= 1;
     end
 

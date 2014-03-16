@@ -14,12 +14,6 @@ module gost89_mac(
   reg  [31:0] n1, n2;
   wire [31:0] out1, out2;
 
-  initial begin
-    busy = 0;
-    counter  = 17;
-    need_xor = 0;
-  end
-
   gost89_round
     rnd(clk, sbox, round_key, n1, n2, out1, out2);
 
@@ -28,7 +22,6 @@ module gost89_mac(
       counter  <= 17;
       need_xor <= 0;
       busy <= 0;
-      out  <= 32'h xxxxxxxx;
     end
 
     if (!reset && load_data) begin
@@ -42,7 +35,6 @@ module gost89_mac(
       end
       counter <= 0;
       busy <= 1;
-      out  <= 32'h xxxxxxxx;
     end
 
     if (reset && load_data) begin
@@ -51,7 +43,6 @@ module gost89_mac(
       counter  <= 0;
       need_xor <= 1;
       busy <= 1;
-      out  <= 32'h xxxxxxxx;
     end
 
     if (!reset && !load_data) begin
@@ -86,6 +77,5 @@ module gost89_mac(
       13: round_key <= key[95:64];
       14: round_key <= key[63:32];
       15: round_key <= key[31:0];
-      default: round_key <= 32'h xxxxxxxx;
     endcase
 endmodule

@@ -12,11 +12,6 @@ module gost89_ecb_encrypt(
   reg  [31:0] n1, n2, round_key;
   wire [31:0] out1, out2;
 
-  initial begin
-    busy = 0;
-    round_num = 32;
-  end
-
   gost89_round
     rnd(clk, sbox, round_key, n1, n2, out1, out2);
 
@@ -24,7 +19,6 @@ module gost89_ecb_encrypt(
     if (load_data) begin
       n1 <= in[63:32];
       n2 <= in[31:0];
-      out  <= 64'h xxxxxxxxxxxxxxxx;
       busy <= 1;
       round_num <= 0;
     end
@@ -83,7 +77,6 @@ module gost89_ecb_encrypt(
       29: round_key <= key[191:160];
       30: round_key <= key[223:192];
       31: round_key <= key[255:224];
-      default: round_key <= 32'h xxxxxxxx;
     endcase
 endmodule
 
@@ -113,7 +106,6 @@ module gost89_ecb_decrypt(
     if (load_data) begin
       n1 <= in[63:32];
       n2 <= in[31:0];
-      out  <= 64'h xxxxxxxxxxxxxxxx;
       busy <= 1;
       round_num <= 0;
     end
@@ -172,6 +164,5 @@ module gost89_ecb_decrypt(
       29: round_key <= key[191:160];
       30: round_key <= key[223:192];
       31: round_key <= key[255:224];
-      default: round_key <= 32'h xxxxxxxx;
     endcase
 endmodule
