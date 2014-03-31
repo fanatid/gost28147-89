@@ -23,8 +23,8 @@
 
 \renewcommand\cftsecdotsep{\cftdotsep}
 
-\newcommand{\currentRevision}{0.1}
-\newcommand{\releaseDate}{March 10, 2014}
+\newcommand{\currentRevision}{0.2}
+\newcommand{\releaseDate}{March 31, 2014}
 
 \begin{document}
 
@@ -62,6 +62,8 @@ Author: Kirill Fomichev\\
 \textbf{Rev.} & \textbf{Date} & \textbf{Author} & \textbf{Description}\\
 \hline
 0.1 & March 10, 2014 & Kirill Fomichev & Initial Release\\
+\hline
+0.2 & March 31, 2014 & Kirill Fomichev & Add bidirectional ECB and CFB modules\\
 \hline
 \end{tabularx}}
 \end{flushleft}
@@ -110,6 +112,7 @@ Signal name & Width & In/Out & Description\\
 \hline
 \textsl{clk}        & 1   & In  & Clock\\
 \textsl{reset}      & 1   & In  & Terminate current encryption/decryption process \\
+\textsl{mode}       & 1   & In  & Decryption when mode equal 1, otherwise encryption\\
 \textsl{load\_data} & 1   & In  & Start of encryption/decryption \\
 \textsl{sbox}       & 512 & In  & S-Box \\
 \textsl{key}        & 256 & In  & Key \\
@@ -143,6 +146,7 @@ Signal name & Width & In/Out & Description\\
 \hline
 \textsl{clk}        & 1   & In  & Clock\\
 \textsl{reset}      & 1   & In  & Terminate current encryption/decryption process and load gamma from \textsl{in} \\
+\textsl{mode}       & 1   & In  & Decryption when mode equal 1, otherwise encryption\\
 \textsl{load\_data} & 1   & In  & Start of encryption/decryption \\
 \textsl{sbox}       & 512 & In  & S-Box \\
 \textsl{key}        & 256 & In  & Key \\

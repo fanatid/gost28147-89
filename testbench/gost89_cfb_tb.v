@@ -7,16 +7,20 @@ module gost89_cfb_tb;
 
   reg  [511:0] sbox = 512'h 4a92d80e6b1c7f53eb4c6dfa23810759581da342efc7609b7da1089fe46cb2536c715fd84a9e03b24ba0721d36859cfedb413f590ae7682c1fd057a4923e6b8c;
   reg  [255:0] key  = 256'h 0475f6e05038fbfad2c7c390edb3ca3d1547124291ae1e8a2f79cd9ed2bcefbd;
-  reg  reset_e, reset_d;
-  reg  load_data_e, load_data_d;
-  reg  [63:0] in_e, in_d;
-  wire [63:0] out_e, out_d;
-  wire busy_e, busy_d;
+  wire mode_e = 0, mode_d = 1;
+  reg  reset;
+  reg  load_data;
+  reg  [63:0] in_e1, in_e2, in_d1, in_d2;
+  wire [63:0] out_e1, out_e2, out_d1, out_d2;
+  wire busy_e1, busy_e2, busy_d1, busy_d2;
 
+  gost89_cfb
+    cfb1(clk, reset, mode_e, load_data, sbox, key, in_e1, out_e1, busy_e1),
+    cfb2(clk, reset, mode_d, load_data, sbox, key, in_d1, out_d1, busy_d1);
   gost89_cfb_encrypt
-    cfb_encrypt1(clk, reset_e, load_data_e, sbox, key, in_e, out_e, busy_e);
+    cfb_encrypt1(clk, reset, load_data, sbox, key, in_e2, out_e2, busy_e2);
   gost89_cfb_decrypt
-    cfb_decrypt1(clk, reset_d, load_data_d, sbox, key, in_d, out_d, busy_d);
+    cfb_decrypt1(clk, reset, load_data, sbox, key, in_d2, out_d2, busy_d2);
 
 /*
 CFB mode (gamma: 6aa0379517bb57af):
@@ -33,70 +37,77 @@ CFB mode (gamma: fa5679a45f118aed):
     $dumpvars(0, gost89_cfb_tb);
 
     clk = 0;
-    reset_e = 0;
-    reset_d = 0;
-    load_data_e = 0;
-    load_data_d = 0;
+    reset = 0;
+    load_data = 0;
 
 // Normal usage
     #1;
-    in_e = 64'h 6aa0379517bb57af; in_d = 64'h 6aa0379517bb57af;
-    reset_e = 1; reset_d = 1;
+    in_e1 = 64'h 6aa0379517bb57af; in_d1 = 64'h 6aa0379517bb57af;
+    in_e2 = 64'h 6aa0379517bb57af; in_d2 = 64'h 6aa0379517bb57af;
+    reset = 1;
     #2;
-    reset_e = 0; reset_d = 0;
-    in_e = 64'h 8d437364581af0da; in_d = 64'h 54826055ab718bc7;
-    load_data_e = 1; load_data_d = 1;
+    reset = 0;
+    in_e1 = 64'h 8d437364581af0da; in_d1 = 64'h 54826055ab718bc7;
+    in_e2 = 64'h 8d437364581af0da; in_d2 = 64'h 54826055ab718bc7;
+    load_data = 1;
     #2;
-    load_data_e = 0; load_data_d = 0;
+    load_data = 0;
     #68;
-    if (out_e !== 64'h 54826055ab718bc7 && out_d !== 64'h 8d437364581af0da)
+    if (out_e1 != out_e2 || out_e2 != 64'h 54826055ab718bc7 || out_d1 != out_d2 || out_d2 != 64'h 8d437364581af0da)
       begin $display("E"); $finish; end
     $display("OK");
-    in_e = 64'h 12911df3eddcc0fb; in_d = 64'h 585ddacf1a45e472;
-    load_data_e = 1; load_data_d = 1;
+    in_e1 = 64'h 12911df3eddcc0fb; in_d1 = 64'h 585ddacf1a45e472;
+    in_e2 = 64'h 12911df3eddcc0fb; in_d2 = 64'h 585ddacf1a45e472;
+    load_data = 1;
     #2;
-    load_data_e = 0; load_data_d = 0;
+    load_data = 0;
     #68;
-    if (out_e !== 64'h 585ddacf1a45e472 && out_d !== 64'h 12911df3eddcc0fb)
+    if (out_e1 != out_e2 || out_e2 != 64'h 585ddacf1a45e472 || out_d1 != out_d2 || out_d2 != 64'h 12911df3eddcc0fb)
       begin $display("E"); $finish; end
     $display("OK");
 
 // Change gamma
     #2;
-    in_e = 64'h fa5679a45f118aed; in_d = 64'h fa5679a45f118aed;
-    reset_e = 1; reset_d = 1;
+    in_e1 = 64'h fa5679a45f118aed; in_d1 = 64'h fa5679a45f118aed;
+    in_e2 = 64'h fa5679a45f118aed; in_d2 = 64'h fa5679a45f118aed;
+    reset = 1;
     #2;
-    reset_e = 0; reset_d = 0;
-    in_e = 64'h 419677a6eff07f2f; in_d = 64'h 27d3e781cc4fcf43;
-    load_data_e = 1; load_data_d = 1;
+    reset = 0;
+    in_e1 = 64'h 419677a6eff07f2f; in_d1 = 64'h 27d3e781cc4fcf43;
+    in_e2 = 64'h 419677a6eff07f2f; in_d2 = 64'h 27d3e781cc4fcf43;
+    load_data = 1;
     #2;
-    load_data_e = 0; load_data_d = 0;
+    load_data = 0;
     #68;
-    if (out_e !== 64'h 27d3e781cc4fcf43 && out_d !== 64'h 419677a6eff07f2f)
+    if (out_e1 != out_e2 || out_e2 != 64'h 27d3e781cc4fcf43 || out_d1 != out_d2 || out_d2 != 64'h 419677a6eff07f2f)
       begin $display("E"); $finish; end
     $display("OK");
 
 // Reset in processing
     #2;
-    in_e = 64'h 6aa0379517bb57af; in_d = 64'h 6aa0379517bb57af;
-    reset_e = 1; reset_d = 1;
+    in_e1 = 64'h 6aa0379517bb57af; in_d1 = 64'h 6aa0379517bb57af;
+    in_e2 = 64'h 6aa0379517bb57af; in_d2 = 64'h 6aa0379517bb57af;
+    reset = 1;
     #2;
-    reset_e = 0; reset_d = 0;
-    in_e = 64'h 8d437364581af0da; in_d = 64'h 54826055ab718bc7;
-    load_data_e = 1; load_data_d = 1;
+    reset = 0;
+    in_e1 = 64'h 8d437364581af0da; in_d1 = 64'h 54826055ab718bc7;
+    in_e2 = 64'h 8d437364581af0da; in_d2 = 64'h 54826055ab718bc7;
+    load_data = 1;
     #2;
-    load_data_e = 0; load_data_d = 0;
+    load_data = 0;
     #10;
-    in_e = 64'h fa5679a45f118aed; in_d = 64'h fa5679a45f118aed;
-    reset_e = 1; reset_d = 1;
+    in_e1 = 64'h fa5679a45f118aed; in_d1 = 64'h fa5679a45f118aed;
+    in_e2 = 64'h fa5679a45f118aed; in_d2 = 64'h fa5679a45f118aed;
+    reset = 1;
     #2;
-    reset_e = 0; reset_d = 0;
-    in_e = 64'h 419677a6eff07f2f; in_d = 64'h 27d3e781cc4fcf43;
-    load_data_e = 1; load_data_d = 1;
+    reset = 0;
+    in_e1 = 64'h 419677a6eff07f2f; in_d1 = 64'h 27d3e781cc4fcf43;
+    in_e2 = 64'h 419677a6eff07f2f; in_d2 = 64'h 27d3e781cc4fcf43;
+    load_data = 1;
     #2;
-    load_data_e = 0; load_data_d = 0;
+    load_data = 0;
     #68;
-    if (out_e !== 64'h 27d3e781cc4fcf43 && out_d !== 64'h 419677a6eff07f2f)
+    if (out_e1 != out_e2 || out_e2 != 64'h 27d3e781cc4fcf43 || out_d1 != out_d2 || out_d2 != 64'h 419677a6eff07f2f)
       begin $display("E"); $finish; end
     $display("OK");
 
